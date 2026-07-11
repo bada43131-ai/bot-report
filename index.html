@@ -42,319 +42,63 @@
   .ev .tm{font-size:12px;color:var(--sub);white-space:nowrap}.ev .r2{font-size:13px;color:var(--sub);margin-top:2px}
   footer{margin-top:20px;padding-top:12px;border-top:1px solid var(--line);font-size:11px;color:var(--sub);line-height:1.7}
   footer code{background:var(--chip);padding:1px 5px;border-radius:4px;font-size:10.5px}
+  .msg{color:var(--sub);text-align:center;padding:30px 10px;font-size:14px}
 </style>
 </head>
 <body>
 <div class="tabs" id="tabs"></div>
-<div id="view"></div>
+<div id="view"><div class="msg">불러오는 중…</div></div>
 <footer id="footer"></footer>
 <script>
-const DATA = {
-  "updated": "2026-07-11 21:04 KST",
-  "order": [
-    "etf",
-    "btc",
-    "eth"
-  ],
-  "bots": {
-    "etf": {
-      "name": "주식 ETF",
-      "strat": "돌파 전략",
-      "status": "대기",
-      "holding": false,
-      "focus": {
-        "t": "2026-07-10 15:20",
-        "type": "sell",
-        "sym": "AI광통신",
-        "code": "0173Y0",
-        "price": 12880.0,
-        "qty": "21주",
-        "amt": 270480,
-        "retPct": 3.0,
-        "pnl": 7795,
-        "trigger": "청산 룰 · 15:20 종가 매도 (+3.00%)",
-        "plan": "다음 매수: 목표가 <b>13,240원</b> 돌파 시 진입",
-        "metrics": [
-          {
-            "k": "매도 금액",
-            "v": "270,480원"
-          },
-          {
-            "k": "이 거래 손익",
-            "v": "7,795원 (+3.00%)",
-            "t": "pos"
-          },
-          {
-            "k": "누적 실현",
-            "v": "7,522원 (+2.48%)",
-            "t": "pos"
-          },
-          {
-            "k": "다음 목표가",
-            "v": "13,240원"
-          },
-          {
-            "k": "현재가",
-            "v": "12,920원 · 목표까지 +2.48%"
-          }
-        ]
-      },
-      "past": [
-        {
-          "t": "2026-07-09 15:20",
-          "type": "sell",
-          "sym": "반도체",
-          "code": "390390",
-          "price": 61625.0,
-          "qty": "4주",
-          "amt": 246500,
-          "retPct": 1.27,
-          "pnl": 3022
-        },
-        {
-          "t": "2026-07-09 15:19",
-          "type": "buy",
-          "sym": "AI광통신",
-          "code": "0173Y0",
-          "price": 12505.0,
-          "qty": "21주",
-          "amt": 262605
-        },
-        {
-          "t": "2026-07-08 09:51",
-          "type": "buy",
-          "sym": "반도체",
-          "code": "390390",
-          "price": 60835.0,
-          "qty": "4주",
-          "amt": 243340
-        },
-        {
-          "t": "2026-07-06 15:20",
-          "type": "sell",
-          "sym": "AI광통신",
-          "code": "0173Y0",
-          "price": 13175.0,
-          "qty": "7주",
-          "amt": 92225,
-          "retPct": -0.26,
-          "pnl": -273
-        },
-        {
-          "t": "2026-07-03 15:20",
-          "type": "sell",
-          "sym": "반도체",
-          "code": "390390",
-          "price": 63290.0,
-          "qty": "7주",
-          "amt": 443030,
-          "retPct": -5.91,
-          "pnl": -27948
-        }
-      ]
-    },
-    "btc": {
-      "name": "BTC",
-      "strat": "RSI 반등",
-      "status": "대기",
-      "holding": false,
-      "focus": {
-        "t": "2026-07-08 01:06",
-        "type": "sell",
-        "sym": "KRW-BTC",
-        "price": 95787000.0,
-        "qty": "0.00105",
-        "amt": 100778,
-        "note": "RSI 회복 매도 (RSI 65.1)",
-        "retPct": 0.67,
-        "trigger": "RSI 회복 매도 (RSI 65.1)",
-        "plan": "다음 매수: RSI 저점 반등 신호 대기",
-        "metrics": [
-          {
-            "k": "매도 금액",
-            "v": "100,778원"
-          },
-          {
-            "k": "이 거래 손익",
-            "v": "+0.67%",
-            "t": "pos"
-          },
-          {
-            "k": "누적 실현",
-            "v": "1,168원 (+0.23%)",
-            "t": "pos"
-          },
-          {
-            "k": "현금 / 예산",
-            "v": "501,168 / 500,000"
-          },
-          {
-            "k": "현재가 · 장세",
-            "v": "95,761,000원 · 횡보"
-          }
-        ]
-      },
-      "past": [
-        {
-          "t": "2026-07-07 23:56",
-          "type": "buy",
-          "sym": "KRW-BTC",
-          "price": 95155000.0,
-          "qty": "0.00105",
-          "amt": 100114,
-          "note": "RSI 55.5 반등"
-        },
-        {
-          "t": "2026-07-07 21:08",
-          "type": "sell",
-          "sym": "KRW-BTC",
-          "price": 95453000.0,
-          "qty": "0.00105",
-          "amt": 100156,
-          "note": "RSI 회복 매도 (RSI 65.2)",
-          "retPct": 0.05
-        },
-        {
-          "t": "2026-07-07 11:45",
-          "type": "buy",
-          "sym": "KRW-BTC",
-          "price": 95410000.0,
-          "qty": "0.00105",
-          "amt": 100111,
-          "note": "RSI 38.7 반등"
-        },
-        {
-          "t": "2026-07-07 00:51",
-          "type": "sell",
-          "sym": "KRW-BTC",
-          "price": 95187000.0,
-          "qty": "0.00105",
-          "amt": 100343,
-          "note": "RSI 회복 매도 (RSI 66.6)",
-          "retPct": 0.28
-        },
-        {
-          "t": "2026-07-06 14:37",
-          "type": "buy",
-          "sym": "KRW-BTC",
-          "price": 94923000.0,
-          "qty": "0.00105",
-          "amt": 100065,
-          "note": "RSI 38.8 반등"
-        }
-      ]
-    },
-    "eth": {
-      "name": "ETH",
-      "strat": "변동성돌파 K=0.7",
-      "status": "대기",
-      "holding": false,
-      "focus": {
-        "t": "2026-07-11 09:00",
-        "type": "sell",
-        "sym": "KRW-ETH",
-        "price": 2680000.0,
-        "qty": "0.1844",
-        "amt": 494105,
-        "note": "익일 시가 매도",
-        "retPct": 0.68,
-        "trigger": "익일 시가 매도",
-        "plan": "다음 매수: 목표가 <b>2,752,100원</b> 돌파 시 진입",
-        "metrics": [
-          {
-            "k": "매도 금액",
-            "v": "494,105원"
-          },
-          {
-            "k": "예산 사용",
-            "v": "494,105 / 500,000 (99%)"
-          },
-          {
-            "k": "이 거래 손익",
-            "v": "+0.68%",
-            "t": "pos"
-          },
-          {
-            "k": "다음 목표가",
-            "v": "2,752,100원"
-          },
-          {
-            "k": "현재가",
-            "v": "2,684,000원"
-          },
-          {
-            "k": "누적 실현",
-            "v": "-5,896원 (-1.18%)",
-            "t": "neg"
-          }
-        ]
-      },
-      "past": [
-        {
-          "t": "2026-07-10 17:30",
-          "type": "buy",
-          "sym": "KRW-ETH",
-          "price": 2661000.0,
-          "qty": "0.1844",
-          "amt": 490602,
-          "note": "목표가 2,648,000 돌파"
-        },
-        {
-          "t": "2026-07-07 09:00",
-          "type": "sell",
-          "sym": "KRW-ETH",
-          "price": 2702000.0,
-          "qty": "0.1817",
-          "amt": 491027,
-          "note": "익일 시가 매도",
-          "retPct": -1.75
-        },
-        {
-          "t": "2026-07-07 06:10",
-          "type": "buy",
-          "sym": "KRW-ETH",
-          "price": 2750000.0,
-          "qty": "0.1817",
-          "amt": 499750,
-          "note": "목표가 2,738,200 돌파"
-        }
-      ]
-    }
-  },
-  "savedPath": "C:\\Users\\user\\Documents\\Claude\\Projects\\봇 실적 대시보드\\index.html",
-  "publicUrl": "https://bada43131-ai.github.io/bot-report/"
-};
+/* 봇이 이벤트마다 Apps Script -> GitHub 로 올린 data_<bot>.json 을 읽어 렌더한다.
+   (Cowork 스케줄 불필요 · 토큰 소모 0) */
+var ORDER = ["etf", "btc", "eth"];
+var LABEL = { etf: "주식 ETF", btc: "BTC", eth: "ETH" };
+var BOTS = {};
 
-const WON = n => (n==null?"":Math.round(n).toLocaleString("ko-KR")+"원");
-const PCT = n => (n==null?"":(n>=0?"+":"")+n.toFixed(2)+"%");
-const cls = n => (n==null?"flat":n>0?"pos":n<0?"neg":"flat");
+var WON = function(n){ return (n==null?"":Math.round(n).toLocaleString("ko-KR")+"원"); };
+var PCT = function(n){ return (n==null?"":(n>=0?"+":"")+n.toFixed(2)+"%"); };
+var cls = function(n){ return (n==null?"flat":n>0?"pos":n<0?"neg":"flat"); };
 function col(e){ if(e.type==="buy")return "var(--blue)"; if(e.type==="warn")return "var(--amber)"; if(e.type==="fail")return "var(--red)";
-  const p=e.retPct; return p==null?"var(--sub)":p>=0?"var(--teal)":"var(--red)"; }
+  var p=e.retPct; return p==null?"var(--sub)":p>=0?"var(--teal)":"var(--red)"; }
 function lab(e){ return e.type==="buy"?"매수":e.type==="sell"?"매도":e.type==="warn"?"경고":e.type==="fail"?"실패":e.type; }
 
-const params = new URLSearchParams(location.search);
-let cur = (DATA.bots[params.get("bot")] ? params.get("bot") : (DATA.order[0]||null));
+var params = new URLSearchParams(location.search);
+var want = params.get("bot");
+var cur = (ORDER.indexOf(want) >= 0) ? want : "etf";
 
-document.getElementById("tabs").innerHTML = DATA.order.map(id =>
-  '<button data-b="'+id+'" class="'+(id===cur?'on':'')+'">'+DATA.bots[id].name+'</button>').join("");
-document.querySelectorAll("#tabs button").forEach(function(btn){ btn.addEventListener("click", function(){ cur=btn.dataset.b;
-  document.querySelectorAll("#tabs button").forEach(function(x){ x.classList.toggle("on", x.dataset.b===cur); }); render(); }); });
+function renderTabs(){
+  document.getElementById("tabs").innerHTML = ORDER.map(function(id){
+    return '<button data-b="'+id+'" class="'+(id===cur?'on':'')+'">'+LABEL[id]+'</button>';
+  }).join("");
+  document.querySelectorAll("#tabs button").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      cur = btn.dataset.b;
+      document.querySelectorAll("#tabs button").forEach(function(x){ x.classList.toggle("on", x.dataset.b===cur); });
+      render();
+    });
+  });
+}
 
 function render(){
-  if(!cur){ document.getElementById("view").innerHTML = '<div class="sec">아직 데이터가 없습니다.</div>'; return; }
-  const b = DATA.bots[cur], f = b.focus;
-  const unit = f.price!=null ? f.price.toLocaleString("ko-KR")+"원" : "";
-  const ret = f.retPct!=null ? '<span class="'+cls(f.retPct)+'">'+PCT(f.retPct)+'</span>' : "";
-  const metrics = (f.metrics||[]).map(function(m){ return '<div class="m"><div class="mk">'+m.k+'</div><div class="mv '+(m.t||'')+'">'+m.v+'</div></div>'; }).join("");
-  const past = (b.past||[]).map(function(e){
-    const a = e.retPct!=null ? '<span class="'+cls(e.retPct)+'" style="font-weight:700">'+PCT(e.retPct)+'</span>' : "";
-    const up = e.price!=null ? e.price.toLocaleString("ko-KR")+"원" : "";
+  var b = BOTS[cur];
+  var view = document.getElementById("view");
+  if(!b){ view.innerHTML = '<div class="msg">이 봇의 데이터가 아직 없습니다.<br>다음 매매 이벤트가 발생하면 자동으로 채워집니다.</div>';
+          document.getElementById("footer").innerHTML = foot(null); return; }
+  var f = b.focus;
+  var unit = f.price!=null ? f.price.toLocaleString("ko-KR")+"원" : "";
+  var ret  = f.retPct!=null ? '<span class="'+cls(f.retPct)+'">'+PCT(f.retPct)+'</span>' : "";
+  var metrics = (f.metrics||[]).map(function(m){
+    return '<div class="m"><div class="mk">'+m.k+'</div><div class="mv '+(m.t||'')+'">'+m.v+'</div></div>'; }).join("");
+  var past = (b.past||[]).map(function(e){
+    var a  = e.retPct!=null ? '<span class="'+cls(e.retPct)+'" style="font-weight:700">'+PCT(e.retPct)+'</span>' : "";
+    var up = e.price!=null ? e.price.toLocaleString("ko-KR")+"원" : "";
     return '<div class="ev"><div class="dot" style="background:'+col(e)+'"></div><div class="b">'
       + '<div class="r1"><div class="ty" style="color:'+col(e)+'">'+lab(e)+' · '+(e.sym||"")+'</div><div class="tm">'+e.t+'</div></div>'
       + '<div class="r2"><b style="color:var(--txt)">'+WON(e.amt)+'</b> · '+(e.qty||"")+' @'+up+(e.note?" · "+e.note:"")+' '+a+'</div></div></div>';
   }).join("");
-  document.getElementById("view").innerHTML =
-    '<div class="head"><div class="nm">'+b.name+'</div><div class="st">'+b.strat+'</div></div>'
+  view.innerHTML =
+      '<div class="head"><div class="nm">'+b.name+'</div><div class="st">'+b.strat+'</div></div>'
     + '<span class="badge '+(b.holding?'hold':'')+'">'+b.status+'</span>'
     + '<div class="feat"><div class="bar" style="border-color:'+col(f)+'">'
     +   '<div class="k">최근 이벤트 · '+f.t+'</div>'
@@ -369,12 +113,25 @@ function render(){
     + '<div class="metrics">'+metrics+'</div></div>'
     + '<div class="sec">지난 이벤트</div>'
     + '<div class="log">'+(past || '<div class="ev"><div class="b" style="color:var(--sub)">지난 이벤트가 없습니다.</div></div>')+'</div>';
+  document.getElementById("footer").innerHTML = foot(b.updated);
 }
-render();
 
-document.getElementById("footer").innerHTML =
-  '갱신: '+DATA.updated+' · 봇 알림이 오면 해당 봇 이벤트 화면으로 열립니다.<br>'
-  + '저장 위치: <code>'+DATA.savedPath+'</code><br>공개 주소: <code>'+DATA.publicUrl+'</code>';
+function foot(updated){
+  return '갱신: ' + (updated || '-') + ' · 봇이 매매할 때마다 자동 갱신됩니다.<br>'
+       + '공개 주소: <code>https://bada43131-ai.github.io/bot-report/</code>';
+}
+
+function load(){
+  renderTabs();
+  var bust = "?t=" + Date.now();
+  Promise.all(ORDER.map(function(id){
+    return fetch("data_" + id + ".json" + bust, { cache: "no-store" })
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(j){ if(j) BOTS[id] = j; })
+      .catch(function(){ /* 아직 데이터 없음 */ });
+  })).then(render);
+}
+load();
 </script>
 </body>
 </html>
