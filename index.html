@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>봇 이벤트</title>
+<style>
+  :root{--bg:#0f1b2d;--card:#16263d;--line:#26405f;--txt:#e8eef6;--sub:#93a6bf;
+    --teal:#34d399;--amber:#fbbf24;--red:#f87171;--blue:#60a5fa;--chip:#0e2136}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Malgun Gothic","Apple SD Gothic Neo",sans-serif;
+    padding:16px;max-width:560px;margin:0 auto;-webkit-text-size-adjust:100%}
+  .tabs{display:flex;gap:6px;margin-bottom:16px}
+  .tabs button{flex:1;background:var(--chip);color:var(--sub);border:1px solid var(--line);border-radius:10px;padding:9px 0;font-size:13px;font-weight:700;cursor:pointer}
+  .tabs button.on{background:var(--card);color:var(--txt);border-color:var(--teal)}
+  .head{display:flex;align-items:baseline;gap:8px;margin-bottom:4px}
+  .head .nm{font-size:20px;font-weight:800}.head .st{font-size:13px;color:var(--sub)}
+  .badge{display:inline-block;font-size:12px;padding:3px 10px;border-radius:20px;background:var(--chip);color:var(--sub);border:1px solid var(--line);margin-bottom:14px}
+  .badge.hold{color:var(--teal);border-color:#2c5}
+  .feat{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;margin-bottom:16px}
+  .feat .bar{padding:14px 16px;border-left:5px solid var(--teal)}
+  .feat .k{font-size:12px;color:var(--sub);margin-bottom:5px}
+  .feat .t{font-size:22px;font-weight:800;margin-bottom:6px}
+  .feat .amt{font-size:20px;font-weight:800}
+  .feat .sub{font-size:13px;color:var(--sub);margin-top:3px}
+  .story{padding:0 16px 14px}
+  .story .blk{display:flex;gap:9px;padding:11px 0;border-top:1px solid var(--line)}
+  .story .ic{font-size:15px;flex:none}
+  .story .lb{font-size:11px;color:var(--sub);font-weight:700;letter-spacing:.3px;margin-bottom:2px}
+  .story .tx{font-size:14px;line-height:1.5}
+  .metrics{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border-top:1px solid var(--line)}
+  .metrics .m{background:var(--card);padding:11px 16px}
+  .metrics .mk{font-size:11px;color:var(--sub);margin-bottom:3px}
+  .metrics .mv{font-size:14px;font-weight:700}
+  .pos{color:var(--teal)}.neg{color:var(--red)}.flat{color:var(--sub)}
+  .sec{font-size:13px;font-weight:700;color:var(--sub);margin:2px 2px 10px}
+  .log{display:flex;flex-direction:column;gap:8px}
+  .ev{display:flex;gap:10px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:11px;padding:10px 12px}
+  .ev .dot{width:8px;height:8px;border-radius:50%;margin-top:6px;flex:none}.ev .b{flex:1;min-width:0}
+  .ev .r1{display:flex;justify-content:space-between;gap:8px}.ev .ty{font-weight:700;font-size:14px}
+  .ev .tm{font-size:12px;color:var(--sub);white-space:nowrap}.ev .r2{font-size:13px;color:var(--sub);margin-top:2px}
+  footer{margin-top:20px;padding-top:12px;border-top:1px solid var(--line);font-size:11px;color:var(--sub);line-height:1.7}
+  footer code{background:var(--chip);padding:1px 5px;border-radius:4px;font-size:10.5px}
+</style>
+</head>
+<body>
+<div class="tabs" id="tabs"></div>
+<div id="view"></div>
+<footer id="footer"></footer>
+<script>
+const DATA = {
+  updated: "2026-07-11 07:50 KST",
+  order: ["etf","btc","eth"],
+  bots: {
+    etf: { name:"주식 ETF", strat:"돌파 전략", status:"대기", holding:false,
+      focus:{ t:"2026-07-10 15:20", type:"sell", sym:"AI광통신", price:12880, qty:"21주", amt:270480, retPct:3.0,
+        trigger:"청산 룰 · 15:20 종가 매도로 익절(+3.0%)",
+        plan:"다음 매수: 목표가 <b>13,240원</b> 돌파 시 진입",
+        metrics:[
+          {k:"매도 금액", v:"270,480원"},
+          {k:"매수 원가", v:"262,605원"},
+          {k:"이 거래 손익", v:"+7,795원 (+3.0%)", t:"pos"},
+          {k:"누적 실현", v:"+7,522원 (+2.48%)", t:"pos"},
+          {k:"예산 사용", v:"262,605 / 300,000 (88%)"},
+          {k:"현재가", v:"12,920원 · 목표까지 +2.48%"}
+        ]},
+      past:[
+        { t:"2026-07-09 15:20", type:"sell", sym:"반도체", price:61625, qty:"4주", amt:246500, retPct:1.27 },
+        { t:"2026-07-09 15:19", type:"buy",  sym:"AI광통신", price:12505, qty:"21주", amt:262605 },
+        { t:"2026-07-08 09:51", type:"buy",  sym:"반도체", price:60835, qty:"4주", amt:243340 },
+        { t:"2026-07-03 15:20", type:"sell", sym:"반도체", price:63290, qty:"7주", amt:443030, retPct:-5.91, note:"예산 초과분 청산" }
+      ] },
+    btc: { name:"BTC", strat:"RSI 반등", status:"대기", holding:false,
+      focus:{ t:"2026-07-08 01:06", type:"sell", sym:"KRW-BTC", price:95787000, qty:"0.00105", amt:100779, retPct:0.67,
+        trigger:"RSI 회복 매도 · RSI 65.1 도달로 익절",
+        plan:"다음 매수: RSI 저점 반등 신호 대기",
+        metrics:[
+          {k:"매도 금액", v:"100,779원"},
+          {k:"이 거래 손익", v:"+0.67% (약 +672원)", t:"pos"},
+          {k:"누적 실현", v:"+1,168원 (+0.23%)", t:"pos"},
+          {k:"현금 / 예산", v:"501,168 / 500,000"},
+          {k:"1회 베팅", v:"약 100,000원"},
+          {k:"현재가 · 장세", v:"95,761,000원 · 횡보"}
+        ]},
+      past:[
+        { t:"2026-07-07 23:56", type:"buy",  sym:"KRW-BTC", price:95155000, qty:"0.00105", amt:100131, note:"RSI 55.5 반등" },
+        { t:"2026-07-07 21:08", type:"sell", sym:"KRW-BTC", price:95453000, qty:"0.00105", amt:100157, retPct:0.05 },
+        { t:"2026-07-07 11:45", type:"buy",  sym:"KRW-BTC", price:95410000, qty:"0.00105", amt:100112, note:"RSI 38.7 반등" }
+      ] },
+    eth: { name:"ETH", strat:"변동성돌파 K=0.7", status:"보유 중", holding:true,
+      focus:{ t:"2026-07-10 17:30", type:"buy", sym:"KRW-ETH", price:2661000, qty:"0.1844", amt:490602,
+        trigger:"변동성돌파 · 목표가 2,648,000원 돌파 (당일시가 + 전일변동폭×0.7)",
+        plan:"규칙: 익일 시가 매도 → <b>오늘 09:00 청산 예정</b>",
+        metrics:[
+          {k:"투입 금액", v:"490,602원"},
+          {k:"예산 사용", v:"490,602 / 500,000 (98%)"},
+          {k:"평단가", v:"2,662,000원"},
+          {k:"현재가", v:"2,675,000원 (+0.49%)", t:"pos"},
+          {k:"평가손익", v:"+1,905원", t:"pos"},
+          {k:"매도 예정", v:"오늘 09:00 시가"}
+        ]},
+      past:[
+        { t:"2026-07-07 09:00", type:"sell", sym:"KRW-ETH", price:2702000, qty:"0.1817", amt:491026, retPct:-1.75, note:"익일 시가 매도" },
+        { t:"2026-07-07 06:10", type:"buy",  sym:"KRW-ETH", price:2750000, qty:"0.1817", amt:499749, note:"목표가 돌파" }
+      ] }
+  },
+  savedPath: "C:\\Users\\user\\Documents\\Claude\\Projects\\봇 실적 대시보드\\index.html",
+  publicUrl: "(게시 후 URL 입력)"
+};
+
+const WON = n => (n==null?"":Math.round(n).toLocaleString("ko-KR")+"원");
+const PCT = n => (n==null?"":(n>=0?"+":"")+n.toFixed(2)+"%");
+const cls = n => (n==null?"flat":n>0?"pos":n<0?"neg":"flat");
+function col(e){ if(e.type==="buy")return "var(--blue)"; if(e.type==="warn")return "var(--amber)"; if(e.type==="fail")return "var(--red)";
+  const p=e.retPct; return p==null?"var(--sub)":p>=0?"var(--teal)":"var(--red)"; }
+function lab(e){ return e.type==="buy"?"매수":e.type==="sell"?"매도":e.type==="warn"?"경고":e.type==="fail"?"실패":e.type; }
+
+const params = new URLSearchParams(location.search);
+let cur = DATA.bots[params.get("bot")] ? params.get("bot") : DATA.order[0];
+
+document.getElementById("tabs").innerHTML = DATA.order.map(id=>
+  '<button data-b="'+id+'" class="'+(id===cur?'on':'')+'">'+DATA.bots[id].name+'</button>').join("");
+document.querySelectorAll("#tabs button").forEach(function(btn){ btn.addEventListener("click",function(){ cur=btn.dataset.b;
+  document.querySelectorAll("#tabs button").forEach(function(x){ x.classList.toggle("on",x.dataset.b===cur); }); render(); }); });
+
+function render(){
+  const b = DATA.bots[cur], f = b.focus;
+  const unit = f.price!=null ? f.price.toLocaleString("ko-KR")+"원" : "";
+  const ret = f.retPct!=null ? '<span class="'+cls(f.retPct)+'">'+PCT(f.retPct)+'</span>' : "";
+  const metrics = (f.metrics||[]).map(function(m){ return '<div class="m"><div class="mk">'+m.k+'</div><div class="mv '+(m.t||'')+'">'+m.v+'</div></div>'; }).join("");
+  const past = b.past.map(function(e){
+    const a = e.retPct!=null ? '<span class="'+cls(e.retPct)+'" style="font-weight:700">'+PCT(e.retPct)+'</span>' : "";
+    const up = e.price!=null ? e.price.toLocaleString("ko-KR")+"원" : "";
+    return '<div class="ev"><div class="dot" style="background:'+col(e)+'"></div><div class="b">'
+      + '<div class="r1"><div class="ty" style="color:'+col(e)+'">'+lab(e)+' · '+(e.sym||"")+'</div><div class="tm">'+e.t+'</div></div>'
+      + '<div class="r2"><b style="color:var(--txt)">'+WON(e.amt)+'</b> · '+(e.qty||"")+' @'+up+(e.note?" · "+e.note:"")+' '+a+'</div></div></div>';
+  }).join("");
+  document.getElementById("view").innerHTML =
+    '<div class="head"><div class="nm">'+b.name+'</div><div class="st">'+b.strat+'</div></div>'
+    + '<span class="badge '+(b.holding?'hold':'')+'">'+b.status+'</span>'
+    + '<div class="feat"><div class="bar" style="border-color:'+col(f)+'">'
+    +   '<div class="k">최근 이벤트 · '+f.t+'</div>'
+    +   '<div class="t" style="color:'+col(f)+'">'+lab(f)+' · '+f.sym+'</div>'
+    +   '<div><span class="amt">'+WON(f.amt)+'</span> '+ret+'</div>'
+    +   '<div class="sub">'+(f.qty||"")+' @'+unit+'</div>'
+    + '</div>'
+    + '<div class="story">'
+    +   '<div class="blk"><div class="ic">🎯</div><div><div class="lb">트리거 (왜)</div><div class="tx">'+f.trigger+'</div></div></div>'
+    +   '<div class="blk"><div class="ic">➡️</div><div><div class="lb">다음 단계</div><div class="tx">'+f.plan+'</div></div></div>'
+    + '</div>'
+    + '<div class="metrics">'+metrics+'</div></div>'
+    + '<div class="sec">지난 이벤트</div>'
+    + '<div class="log">'+(past || '<div class="ev"><div class="b" style="color:var(--sub)">지난 이벤트가 없습니다.</div></div>')+'</div>';
+}
+render();
+
+document.getElementById("footer").innerHTML =
+  '갱신: '+DATA.updated+' · 봇 알림이 오면 해당 봇 이벤트 화면으로 열립니다.<br>'
+  + '저장 위치: <code>'+DATA.savedPath+'</code><br>공개 주소: <code>'+DATA.publicUrl+'</code>';
+</script>
+</body>
+</html>
