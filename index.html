@@ -42,6 +42,10 @@
   .ev .tm{font-size:12px;color:var(--sub);white-space:nowrap}.ev .r2{font-size:13px;color:var(--sub);margin-top:2px}
   footer{margin-top:20px;padding-top:12px;border-top:1px solid var(--line);font-size:11px;color:var(--sub);line-height:1.7}
   footer code{background:var(--chip);padding:1px 5px;border-radius:4px;font-size:10.5px}
+  .pt{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:16px}
+  .pt th{color:var(--sub);font-weight:700;padding:7px 6px;border-bottom:1px solid var(--line);text-align:right;background:var(--chip)}
+  .pt td{padding:7px 6px;text-align:right;border-bottom:1px solid var(--line);background:var(--card)}
+  .pt th:first-child,.pt td:first-child{text-align:left}
   .msg{color:var(--sub);text-align:center;padding:30px 10px;font-size:14px}
 </style>
 </head>
@@ -52,8 +56,8 @@
 <script>
 /* 봇이 이벤트마다 Apps Script -> GitHub 로 올린 data_<bot>.json 을 읽어 렌더한다.
    (Cowork 스케줄 불필요 · 토큰 소모 0) */
-var ORDER = ["etf", "btc", "eth"];
-var LABEL = { etf: "주식 ETF", btc: "BTC", eth: "ETH" };
+var ORDER = ["etf", "trend"];
+var LABEL = { etf: "주식 ETF", trend: "코인 추세추종" };
 var BOTS = {};
 
 var WON = function(n){ return (n==null?"":Math.round(n).toLocaleString("ko-KR")+"원"); };
@@ -97,6 +101,16 @@ function render(){
       + '<div class="r1"><div class="ty" style="color:'+col(e)+'">'+lab(e)+' · '+(e.sym||"")+'</div><div class="tm">'+e.t+'</div></div>'
       + '<div class="r2"><b style="color:var(--txt)">'+WON(e.amt)+'</b> · '+(e.qty||"")+' @'+up+(e.note?" · "+e.note:"")+' '+a+'</div></div></div>';
   }).join("");
+  var posHtml = "";
+  if(b.positions && b.positions.length){
+    var w = function(n){ return n==null ? "-" : Math.round(n).toLocaleString("ko-KR"); };
+    posHtml = '<div class="sec">보유 포지션</div><table class="pt">'
+      + '<tr><th>종목</th><th>수량</th><th>평단</th><th>현재가</th><th>손절선</th><th>미실현</th></tr>'
+      + b.positions.map(function(p){
+          return '<tr><td>'+p.sym+'</td><td>'+(p.qty||"")+'</td><td>'+w(p.avg)+'</td><td>'+w(p.now)
+               + '</td><td>'+w(p.stop)+'</td><td class="'+cls(p.uplPct)+'">'+PCT(p.uplPct)+'</td></tr>';
+        }).join("") + '</table>';
+  }
   view.innerHTML =
       '<div class="head"><div class="nm">'+b.name+'</div><div class="st">'+b.strat+'</div></div>'
     + '<span class="badge '+(b.holding?'hold':'')+'">'+b.status+'</span>'
@@ -111,6 +125,7 @@ function render(){
     +   '<div class="blk"><div class="ic">➡️</div><div><div class="lb">다음 단계</div><div class="tx">'+f.plan+'</div></div></div>'
     + '</div>'
     + '<div class="metrics">'+metrics+'</div></div>'
+    + posHtml
     + '<div class="sec">지난 이벤트</div>'
     + '<div class="log">'+(past || '<div class="ev"><div class="b" style="color:var(--sub)">지난 이벤트가 없습니다.</div></div>')+'</div>';
   document.getElementById("footer").innerHTML = foot(b.updated);
