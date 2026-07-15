@@ -57,15 +57,15 @@
 /* 봇이 이벤트마다 Apps Script -> GitHub 로 올린 data_<bot>.json 을 읽어 렌더한다.
    (Cowork 스케줄 불필요 · 토큰 소모 0) */
 var ORDER = ["etf", "trend"];
-var LABEL = { etf: "주식 ETF", trend: "코인 추세추종" };
+var LABEL = { etf: "주식 추세추종", trend: "코인 추세추종" };
 var BOTS = {};
 
 var WON = function(n){ return (n==null?"":Math.round(n).toLocaleString("ko-KR")+"원"); };
 var PCT = function(n){ return (n==null?"":(n>=0?"+":"")+n.toFixed(2)+"%"); };
 var cls = function(n){ return (n==null?"flat":n>0?"pos":n<0?"neg":"flat"); };
-function col(e){ if(e.type==="buy")return "var(--blue)"; if(e.type==="warn")return "var(--amber)"; if(e.type==="fail")return "var(--red)";
+function col(e){ if(e.type==="buy")return "var(--blue)"; if(e.type==="warn")return "var(--amber)"; if(e.type==="fail")return "var(--red)"; if(e.type==="info")return "var(--teal)";
   var p=e.retPct; return p==null?"var(--sub)":p>=0?"var(--teal)":"var(--red)"; }
-function lab(e){ return e.type==="buy"?"매수":e.type==="sell"?"매도":e.type==="warn"?"경고":e.type==="fail"?"실패":e.type; }
+function lab(e){ return e.type==="buy"?"매수":e.type==="sell"?"매도":e.type==="warn"?"경고":e.type==="fail"?"실패":e.type==="info"?"안내":e.type; }
 
 var params = new URLSearchParams(location.search);
 var want = params.get("bot");
