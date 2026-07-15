@@ -118,7 +118,7 @@ function render(){
     +   '<div class="k">최근 이벤트 · '+f.t+'</div>'
     +   '<div class="t" style="color:'+col(f)+'">'+lab(f)+' · '+f.sym+'</div>'
     +   '<div><span class="amt">'+WON(f.amt)+'</span> '+ret+'</div>'
-    +   '<div class="sub">'+(f.qty||"")+' @'+unit+'</div>'
+    +   ((f.qty||unit) ? '<div class="sub">'+(f.qty||"")+(unit?' @'+unit:'')+'</div>' : '')
     + '</div>'
     + '<div class="story">'
     +   '<div class="blk"><div class="ic">🎯</div><div><div class="lb">트리거 (왜)</div><div class="tx">'+f.trigger+'</div></div></div>'
